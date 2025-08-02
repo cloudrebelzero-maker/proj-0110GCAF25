@@ -1,0 +1,71 @@
+# proj-0110GCAF25
+# Cloud Computing Lab Name: The Basics of Google Cloud Compute: Challenge Lab  
+**Code Name: ARC120**
+
+---
+
+Hey friends! 👋 Here’s how to set up your Looker project step-by-step for the training lab. Don’t worry—this guide uses simple English and works great for beginners. 💡
+
+## ✅ TASK 1: Create a Storage Bucket
+
+1. Go to **Cloud Storage** on the left-side menu.  
+2. Click **"Buckets"**.  
+3. Click **"Create"**.  
+4. Name your bucket:  
+   👉 **`<your-project-id>-bucket`**  
+5. Click **Continue**, then click **Create**.
+
+📸 *Insert your screenshot here:*  
+`![Find your Bucket](https://github.com/cloudrebelzero-maker/proj-0110GCAF25/blob/main/Screenshot%202025-08-02%20213309.png?raw=true)`
+
+---
+
+## ✅ TASK 2: Set Your Zone and Run Setup Script
+
+1. Find your **zone** in the **Challenge Scenario**.  
+   Example: `us-central1-a`  
+
+📸 *Insert your screenshot here:*  
+`![Find Zone](https://github.com/cloudrebelzero-maker/proj-0110GCAF25/blob/main/Screenshot%202025-08-02%20213716.png?raw=true)`
+
+2. In Cloud Shell, export your zone:
+
+```bash
+export ZONE=your-zone-here
+```
+
+3. Run this script in Cloud Shell:
+
+```bash
+curl -LO https://raw.githubusercontent.com/Techcps/ARC/master/The%20Basics%20of%20Google%20Cloud%20Compute%3A%20Challenge%20Lab/techcps120.sh
+sudo chmod +x techcps120.sh
+./techcps120.sh
+```
+
+---
+
+## ✅ TASK 3: Connect to VM and Install NGINX
+
+1. SSH into your instance:
+
+```bash
+gcloud compute ssh my-instance --zone=$ZONE
+```
+
+2. After connecting, run these commands to install **NGINX**:
+
+```bash
+sudo sed -i '/bullseye-backports/s/^/#/' /etc/apt/sources.list
+sudo apt-get update
+sudo apt-get install nginx -y
+sudo systemctl start nginx
+sudo systemctl enable nginx
+sudo systemctl status nginx
+```
+
+---
+
+### 💡 Tips:
+- Double-check your **project ID** and **zone name**.
+- Use Cloud Shell for copy-pasting commands easily.
+- Screenshots help you stay on track!
