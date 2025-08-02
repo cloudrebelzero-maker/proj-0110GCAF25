@@ -1,24 +1,27 @@
 # proj-0110GCAF25
 
-Pre-assesment
-Lab Name: Build LookML Objects in Looker
-Code Name: GSP361
 
-Hey friends! 👋
-Here’s how to set up your Looker project step-by-step for the training lab. Don’t worry—this guide uses simple English and works great for beginners. 💡
+# Pre-assessment Lab Name: Build LookML Objects in Looker  
+**Code Name: GSP361**
 
-✅ Step 1 – Turn On Development Mode
+Hey friends! 👋 Here’s how to set up your Looker project step-by-step for the training lab. Don’t worry—this guide uses simple English and works great for beginners. 💡
+
+---
+
+## ✅ Step 1 – Turn On Development Mode  
 👉 In Looker, go to the top-right menu, click your name, and choose "Development Mode".
 
-📁 Step 2 – Create View File: order_items_challenge.view
-In the left sidebar, click the plus (+) icon → Choose View File.
+---
 
-Name it: order_items_challenge
+## 📁 Step 2 – Create View File: `order_items_challenge.view`  
+In the left sidebar, click the plus (+) icon → Choose View File.  
+Name it: `order_items_challenge`  
 
 Paste this code inside:
 
+```lookml
 view: order_items_challenge {
-  sql_table_name: `cloud-training-demos.looker_ecomm.order_items` ;;
+  sql_table_name: cloud-training-demos.looker_ecomm.order_items ;;
   drill_fields: [order_item_id]
 
   dimension: order_item_id {
@@ -53,17 +56,17 @@ view: order_items_challenge {
     sql: ${TABLE}.order_id ;;
   }
 }
+```
 
-📁 Step 3 – Create View File: user_details.view
-Again, click the plus (+) → Choose View File
+---
 
-Name it: user_details
+## 📁 Step 3 – Create View File: `user_details.view`  
+Again, click the plus (+) → Choose View File  
+Name it: `user_details`  
 
 Paste this code:
 
-lookml
-Copy
-Edit
+```lookml
 view: user_details {
   derived_table: {
     explore_source: order_items {
@@ -78,30 +81,32 @@ view: user_details {
 
   dimension: order_id { type: number }
   dimension: user_id { type: number }
-  dimension: total_revenue { type: number value_format: "$#,##0.00" }
+  dimension: total_revenue {
+    type: number
+    value_format: "$#,##0.00"
+  }
   dimension: age { type: number }
   dimension: city {}
   dimension: state {}
 }
-⚙️ Step 4 – Update Your training_ecommerce.model File
-Open your training_ecommerce.model file.
+```
 
-Replace everything with this code:
+---
 
-💡 On line max_cache_age: "NUM hours", replace NUM with the number of hours from Task 4 (e.g., 2 hours or 4 hours).
+## ⚙️ Step 4 – Update Your `training_ecommerce.model` File  
+Open your `training_ecommerce.model` file. Replace everything with this code:  
+💡 On line `max_cache_age: "NUM hours"`, replace NUM with the number of hours from Task 4 (e.g., `2 hours` or `4 hours`).
 
-lookml
-Copy
-Edit
+```lookml
 connection: "bigquery_public_data_looker"
 
-include: "/views/*.view"
-include: "/z_tests/*.lkml"
+include: "/views/.view"
+include: "/z_tests/.lkml"
 include: "/**/*.dashboard"
 
 datagroup: order_items_challenge_datagroup {
   sql_trigger: SELECT MAX(order_item_id) from order_items ;;
-  max_cache_age: "2 hours" # <--- Change this number based on lab
+  max_cache_age: "2 hours"  # <--- Change this number based on lab
 }
 
 persist_with: order_items_challenge_datagroup
@@ -173,19 +178,24 @@ explore: events {
     relationship: many_to_one
   }
 }
-📁 Step 5 – Replace order_items.view
-Open order_items.view
+```
 
+---
+
+## 📁 Step 5 – Replace `order_items.view`  
+Open `order_items.view`  
 Replace all of it with the final version provided in the lab (you can copy it from your prompt above — it’s long but detailed).
 
-✅ Final Step – WAIT for 4–5 minutes
-After saving all files and committing changes, Looker may take a few minutes to refresh your progress.
+---
 
-Then you can click "Check My Progress" in your lab.
+## ✅ Final Step – WAIT for 4–5 minutes  
+After saving all files and committing changes, Looker may take a few minutes to refresh your progress.  
+Then you can click **"Check My Progress"** in your lab.
 
-🧠 Tips for Beginners
-Always click Save and Validate.
+---
 
-Watch out for quote marks and indentation.
+## 🧠 Tips for Beginners  
+- Always click **Save and Validate**.  
+- Watch out for quote marks and indentation.  
+- If it fails, double-check view names and field spelling.
 
-If it fails, double-check view names and field spelling.
