@@ -1,1 +1,191 @@
 # proj-0110GCAF25
+
+Pre-assesment
+Lab Name: Build LookML Objects in Looker
+Code Name: GSP361
+
+Hey friends! 👋
+Here’s how to set up your Looker project step-by-step for the training lab. Don’t worry—this guide uses simple English and works great for beginners. 💡
+
+✅ Step 1 – Turn On Development Mode
+👉 In Looker, go to the top-right menu, click your name, and choose "Development Mode".
+
+📁 Step 2 – Create View File: order_items_challenge.view
+In the left sidebar, click the plus (+) icon → Choose View File.
+
+Name it: order_items_challenge
+
+Paste this code inside:
+
+view: order_items_challenge {
+  sql_table_name: `cloud-training-demos.looker_ecomm.order_items` ;;
+  drill_fields: [order_item_id]
+
+  dimension: order_item_id {
+    primary_key: yes
+    type: number
+    sql: ${TABLE}.id ;;
+  }
+
+  dimension: is_search_source {
+    type: yesno
+    sql: ${users.traffic_source} = "Search" ;;
+  }
+
+  measure: sales_from_complete_search_users {
+    type: sum
+    sql: ${TABLE}.sale_price ;;
+    filters: [is_search_source: "Yes", order_items.status: "Complete"]
+  }
+
+  measure: total_gross_margin {
+    type: sum
+    sql: ${TABLE}.sale_price - ${inventory_items.cost} ;;
+  }
+
+  dimension: return_days {
+    type: number
+    sql: DATE_DIFF(${order_items.delivered_date}, ${order_items.returned_date}, DAY);;
+  }
+
+  dimension: order_id {
+    type: number
+    sql: ${TABLE}.order_id ;;
+  }
+}
+
+📁 Step 3 – Create View File: user_details.view
+Again, click the plus (+) → Choose View File
+
+Name it: user_details
+
+Paste this code:
+
+lookml
+Copy
+Edit
+view: user_details {
+  derived_table: {
+    explore_source: order_items {
+      column: order_id {}
+      column: user_id {}
+      column: total_revenue {}
+      column: age { field: users.age }
+      column: city { field: users.city }
+      column: state { field: users.state }
+    }
+  }
+
+  dimension: order_id { type: number }
+  dimension: user_id { type: number }
+  dimension: total_revenue { type: number value_format: "$#,##0.00" }
+  dimension: age { type: number }
+  dimension: city {}
+  dimension: state {}
+}
+⚙️ Step 4 – Update Your training_ecommerce.model File
+Open your training_ecommerce.model file.
+
+Replace everything with this code:
+
+💡 On line max_cache_age: "NUM hours", replace NUM with the number of hours from Task 4 (e.g., 2 hours or 4 hours).
+
+lookml
+Copy
+Edit
+connection: "bigquery_public_data_looker"
+
+include: "/views/*.view"
+include: "/z_tests/*.lkml"
+include: "/**/*.dashboard"
+
+datagroup: order_items_challenge_datagroup {
+  sql_trigger: SELECT MAX(order_item_id) from order_items ;;
+  max_cache_age: "2 hours" # <--- Change this number based on lab
+}
+
+persist_with: order_items_challenge_datagroup
+
+label: "E-Commerce Training"
+
+explore: order_items {
+  always_filter: {
+    filters: [
+      order_items.status: "Shipped",
+      users.state: "California",
+      users.traffic_source: "Search"
+    ]
+  }
+
+  join: user_details {
+    type: left_outer
+    sql_on: ${order_items.user_id} = ${user_details.user_id} ;;
+    relationship: many_to_one
+  }
+
+  join: order_items_challenge {
+    type: left_outer
+    sql_on: ${order_items.order_id} = ${order_items_challenge.order_id} ;;
+    relationship: many_to_one
+  }
+
+  join: users {
+    type: left_outer
+    sql_on: ${order_items.user_id} = ${users.id} ;;
+    relationship: many_to_one
+  }
+
+  join: inventory_items {
+    type: left_outer
+    sql_on: ${order_items.inventory_item_id} = ${inventory_items.id} ;;
+    relationship: many_to_one
+  }
+
+  join: products {
+    type: left_outer
+    sql_on: ${inventory_items.product_id} = ${products.id} ;;
+    relationship: many_to_one
+  }
+
+  join: distribution_centers {
+    type: left_outer
+    sql_on: ${products.distribution_center_id} = ${distribution_centers.id} ;;
+    relationship: many_to_one
+  }
+}
+
+explore: events {
+  join: event_session_facts {
+    type: left_outer
+    sql_on: ${events.session_id} = ${event_session_facts.session_id} ;;
+    relationship: many_to_one
+  }
+
+  join: event_session_funnel {
+    type: left_outer
+    sql_on: ${events.session_id} = ${event_session_funnel.session_id} ;;
+    relationship: many_to_one
+  }
+
+  join: users {
+    type: left_outer
+    sql_on: ${events.user_id} = ${users.id} ;;
+    relationship: many_to_one
+  }
+}
+📁 Step 5 – Replace order_items.view
+Open order_items.view
+
+Replace all of it with the final version provided in the lab (you can copy it from your prompt above — it’s long but detailed).
+
+✅ Final Step – WAIT for 4–5 minutes
+After saving all files and committing changes, Looker may take a few minutes to refresh your progress.
+
+Then you can click "Check My Progress" in your lab.
+
+🧠 Tips for Beginners
+Always click Save and Validate.
+
+Watch out for quote marks and indentation.
+
+If it fails, double-check view names and field spelling.
